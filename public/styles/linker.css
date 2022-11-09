@@ -1,0 +1,42 @@
+.linker-block {
+    width: 300px;
+}
+.linker {
+    display: inline-flex;
+    width: 84%;
+}
+
+.linkerForm {
+    display: inline-block;
+    border-style: solid;
+    padding: 10px 10px;
+    margin: auto;
+    width: 50%;
+    margin-top: 100px;
+    border: 1px solid #2B2A33;
+    border-radius: 25px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.hide {
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+.linkerFormContainer {
+    display: inline-flex;
+    width: 84%;
+}
+
+.submit-button {
+    display: inline-block;
+    width: 9%;
+    background-color: #e2b41d;
+    border: 1px solid #aaa;;
+    border-radius: 4px;
+    height: 28px;
+    font-family: 'Roboto', sans-serif;
+}

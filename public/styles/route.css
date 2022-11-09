@@ -1,0 +1,143 @@
+.stepper-wrapper {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 125px;
+  margin-bottom: 20px;
+  margin-left: 3%;
+  max-width: 91%;
+}
+.stepper-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+}
+
+.stepper-item::before {
+  position: relative;
+  content: "";
+  border-bottom: 3px solid;
+  border-color: inherit;
+  width: 100%;
+  top: 43.47%;
+  left: -50%;
+  z-index: 2;
+}
+
+.stepper-item .step-counter {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: white;
+  margin-bottom: 6px;
+}
+.step-name {
+    position: absolute;
+    color: black;
+    width: 210px;
+    margin: -70px;
+    margin-left: 135px;
+    transform: rotate(-33deg);
+    text-align: left;
+}
+.stepper-item:first-child::before {
+  content: none;
+}
+.stepper-item:last-child::after {
+  content: none;
+}
+
+.trolleybus {
+  background: #1b4b8b;
+}
+
+.bus {
+  background: darkred;
+}
+
+.minibus {
+  /* background: #f8d000; yellow */
+  background: #e88832
+}
+
+.tram {
+  background: darkgreen;
+}
+
+.even {
+  background-color: #f5f5f5;
+}
+
+.odd {
+  background: #ffffff;
+}
+
+.detailsTable th {
+  text-align: center;
+  padding: 0px;
+  width: 200px;
+}
+
+.detailsTable td {
+  text-align: center;
+}
+
+.detailsTable table {
+  margin-left: 200px;
+  border: none;
+  border-collapse: collapse;
+  box-shadow: 0px 1px 1px 0px rgba(240, 240, 240, 1);
+}
+
+.detailsTable h3 {
+  margin-left: 10%;
+  width: 600px;
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.detailsTable th {
+  color: white;
+}
+
+.detailsTable .infoBox {
+  color: #8A6D3B;
+  margin-left: 150px;
+  width: 700px;
+  background-color: #FCF8E3;
+  border: 1px solid #FAEBCC;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.detailsTable .changeBox {
+  color: #A94442;
+  margin-left: 150px;
+  width: 700px;
+  background-color: #F2DEDE;
+  border: 1px solid #EBCCD1;
+  border-radius: 5px;
+  text-align: center;
+}
+
+h3 {
+  margin-left: 100px;
+  width: 250px;
+  text-align: left;
+  border-bottom: 2px solid;
+}
+
+.detailsTable h4 {
+  margin: 2%;
+}

@@ -1,0 +1,73 @@
+<% let start = "NULL", end = "NULL", type = "NULL", cnt = 0, lineId, a = 0, j = 1 %>
+<% const day = ["Monday-Friday", "Saturday", "Sunday"] %>
+<% linker.forEach(function(linker) { %>
+  <% if (linker.routeDirection == 'S' && start == "NULL" && linker.previousStop == -1) { %>
+    <% start = linker.stop_name %>
+  <% } %>
+  <% if (linker.routeDirection =='R' && end == "NULL" && linker.previousStop == -1) {%>
+    <% end = linker.stop_name %>
+  <% } %>
+<% }) %>
+<% linker.forEach(function(linker) { %>
+    <% if (linker.number == query.route && type == "NULL") {%>
+        <% type = linker.type %>
+        <% lineId = linker.id %>
+    <% } %>
+<% }) %>
+<% for (let i = 0; i < 3; i++) {%>
+    <% a = 0 %>
+    <% times.forEach(function(times) { %>
+    <%    if(times.lineNo == lineId && times.type == i && (times.departureStart != "" || times.departureReturn != "")) a++ %>
+    <% }) %>
+    <% if (a) { %>
+        <% j = 1; %>
+<table>
+    <thead>
+        <tr>
+            <th colspan = 2 style = "color: black"><%= day[i] %></th>
+        </tr>
+        <tr>
+            <th class="<%= type %>">
+                <%= start %>
+            </th>
+            <th class="<%= type %>">
+                <%= end %>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <% times.forEach(function(times) { %>
+            <% if (times.lineNo == lineId && times.type == i && !(times.departureStart == "" && times.departureReturn == "")) { %>
+            <tr class = <% if (j % 2) { %> "odd" <% } else {%> "even" <% } %>>
+                <% if (times.lineNo == lineId && times.type == i) {%>
+                <td><%= times.departureStart %></td>
+                <td><%= times.departureReturn %></td>
+                <% } %>
+            </tr>
+            <% j++ %>
+            <% } %>
+        <% }) %>
+    </tbody>
+</table>
+<% } else { %>
+<table>
+    <thead>
+        <tr>
+            <th colspan = 2 style = "color: black; text-align: center; width: 100%"><%= day[i] %></th>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody style = "box-shadow: 0px 0px 0px 0px">
+        <tr>
+            <td colspan = 2 style = "color: black; text-align: center; width: 100%">Linia nu circulă</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+<% }} %>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/public/styles/admin.css" />
+    <link rel="stylesheet" type="text/css" href="/public/styles/linker.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+    <body>
+        <%- include ("../../partials/admin-sidebar") %>
+        <div class = "linkerFormContainer">
+            <form class="linkerForm" action="/admin/stations" method="post">
+                <label for = "station">Name of the station</label><br>
+                <input type = "text" id = "stopName" name = "stopName" style = "width: 100%" required><br>
+                <input type = "submit" id = "submit" value = "Submit">
+            </form>
+        </div>
+    </body>
+</html>
+<script>
+    var dropdown = document.getElementsByClassName("dropdown-bar");
+    var dropdown2 = document.getElementsByClassName("dropdown-container");
+    for(let i = 0; i < dropdown.length; i++)
+    dropdown[i].addEventListener("click", function() {
+        if (dropdown2[i].style.display === "block") {
+            dropdown2[i].style.display = "none";
+        }
+        else {
+            dropdown2[i].style.display = "block";
+        }
+    });
+</script>

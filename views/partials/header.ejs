@@ -1,0 +1,22 @@
+    
+    <nav class = "navigation-bar">
+        <ul>
+            <li><a class = "navigation-bar-element<% if (selected == 1) {%> active<%} %>" href = "/">Home</a></li>
+            <li><a class = "navigation-bar-element<% if (selected == 2) {%> active<%} %>" href = "/about">About</a></li>
+            <li><a class = "navigation-bar-element<% if (selected == 3) {%> active<%} %>" href = "/contact">Contact</a></li>
+            <li><a class = "navigation-bar-logo">The Metropolitan Project</a></li>
+            <li><a class = "navigation-bar-element-right">Special Routes</a></li>
+            <li>
+                <a class = "navigation-bar-element-right<% if (selected == 5) {%> active<% } %>" href = "/metropolitan">Metropolitan Routes</a></li>
+            <li>
+                <div class = "navigation-bar-list">
+                    <button class = "navigation-bar-list-button<% if (selected == 4) {%> active<%} %>">Urban Routes</button>
+                    <div class = "navigation-bar-list-content">
+                        <a href = "/urban?region=CJ">Cluj-Napoca</a>
+                        <a href = "/urban?region=SM">Satu Mare</a>
+                        <a href = "/urban?region=SJ">Zalău</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>

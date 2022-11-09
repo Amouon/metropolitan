@@ -1,0 +1,1 @@
+module.exports.asyncWrapper = fn => (...args) => fn(...args).catch(args[2]);

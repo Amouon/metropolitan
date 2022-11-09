@@ -1,0 +1,28 @@
+{
+  "name": "metropolitan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amouon/metropolitan.git"
+  },
+  "author": "Kristo Mark",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Amouon/metropolitan/issues"
+  },
+  "homepage": "https://github.com/Amouon/metropolitan#readme",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "jsdom": "^20.0.2",
+    "mysql2": "^2.3.3",
+    "node-fetch": "^3.2.10",
+    "nodemon": "^2.0.20"
+  }
+}

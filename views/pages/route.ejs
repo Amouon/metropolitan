@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en-IS">
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300&display=swap" rel="stylesheet"> 
+    <%- include('../partials/head'); %>
+    <% var counter = 0 %>
+    <% let previousStop = -1 %>
+    <% let type %>
+    <% var selected = 0 %>
+    <% if (query.route.charAt(0) == 'M') { %>
+      <% selected = 5 %>
+    <% } else { %>
+      <% selected = 4 %>
+    <% } %>
+    <% linker.forEach(function(linker) { %>
+      <% if (linker.number == query.route) type = linker.type %>
+    <% }) %>
+    <% if (type == "trolleybus") { %>
+      <% type = "#1b4b8b" %>
+    <% } else if (type == "bus") { %>
+      <% type = "darkred" %>
+    <% } else if (type == "minibus") { %>
+      <% type = "#e88832" //"#f8d000" yellow color %>
+    <% } else { %>
+      <% type = "darkgreen" %>
+    <% } %>
+    <% let color = "style = \"border-color:" + type + "\""; %>
+    <link rel="stylesheet" type="text/css" href="/public/styles/route.css"/>
+    <link rel="stylesheet" type="text/css" href="/public/styles/routeTable.css"/>
+  </head>
+  <body class = "main-container" style = "overflow-x: hidden; font-family: 'Roboto', sans-serif;">
+    <header><%- include('../partials/header', {selected}); %></header>
+    <h3 <%- color %>>Linia <%= query.route %></h3>
+    <% if (detailed) { %>
+    <div class = "detailsTable">
+      <table>
+        <tr class = <%= detailed.type %>>
+          <th>End of Line I</th>
+          <th>End of Line II</th>
+          <th>Means of transportation</th>
+        </tr>
+        <tr>
+          <td><%= detailed.endOne %></td>
+          <td><%= detailed.endTwo %></td>
+          <td><%= detailed.type.charAt(0).toUpperCase() + detailed.type.slice(1) %></td>
+        </tr>
+      </table><br>
+      <% if (detailed.changes != "") { %>
+        <div class = "changeBox">
+          <h4>Attention!</h4>
+          <p><%= detailed.changes %></p>
+        </div>
+      <% } %>
+      <% if (detailed.info != "") { %>
+        <div class = "infoBox">
+          <h4>Info:</h4>
+          <p><%= detailed.info %></p>
+        </div>
+      <% } %>
+    </div>
+    <% } %>
+    <h3 <%- color %>>Timetables for the route</h3>
+    <div class = "routeTable">
+      <%- include('../partials/route-table'); %>
+    </div>
+    <h3 <%- color %>>Flowchart for bus stations</h3>
+    <div class = "stepper-wrapper">
+      <% linker.forEach(function(e) { %>
+        <% linker.forEach(function(linker) { %>
+      <% if (linker.number == query.route && linker.routeDirection == 'S' && linker.previousStop == previousStop) {%>
+        <div class = "stepper-item" <%- color %>>
+          <div class = "step-name"><%= linker.stop_name %></div> <% previousStop = linker.stopId %>
+          <div class = "step-counter <%= linker.type %>"><%= counter %></div>
+      </div> <% counter++ } %>
+      <% })}) %>
+    </div>
+    </div>
+    <div class = "stepper-wrapper">
+      <% counter = 0, previousStop = -1 %>
+      <% linker.forEach(function(e) { %>
+        <% linker.forEach(function(linker) { %>
+      <% if (linker.number == query.route && linker.routeDirection == 'R' && linker.previousStop == previousStop) {%>
+        <div class = "stepper-item" <%- color %>>
+          <div class = "step-name"><%= linker.stop_name %></div> <% previousStop = linker.stopId %>
+          <div class = "step-counter <%= linker.type %>"><%= counter %></div>
+      </div> <% counter++ } %>
+      <% })}) %>
+    </div>
+  </body>
+</html>

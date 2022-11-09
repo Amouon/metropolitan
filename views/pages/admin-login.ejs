@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet"> 
+    <link rel = "stylesheet" type = "text/css" href = "/public/styles/login.css" />
+</head>
+<body style = "font-family: 'Roboto', sans-serif">
+    <main>
+        <div class = "container">
+            <h1 style = "margin: 10%; text-align: center">Login</h1>
+            <form style = "margin: 10%" action="/admin/login" method="post">
+                <label for = "username">Email</label><br>
+                <input type = "text" id = "email" name = "email" required><br><br>
+                <label for = "password">Password</label><br>
+                <input type = "password" id = "password" name = "password" required><br><br>
+                <input type = "submit" id = "submit" value = "Submit" style = "font-family: 'Roboto', sans-serif"><br>
+             </form>
+             <div style = "margin: 10%; border-top: 2px solid #1b4b8b; width: 300px">
+                <p>Contact your supervisor in case you forgot your password.</p>
+                <p>If you're new, use the login details provided to you by your supervisor.</p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

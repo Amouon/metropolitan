@@ -1,0 +1,32 @@
+.routeTable table {
+    display: inline-block;
+    margin-left: 13%;
+    width: 300px;
+    height: 200px;
+    max-height: 200px;
+    text-align: center;
+    border-spacing: 0;
+    table-layout: fixed;
+    border-collapse: collapse;
+    box-shadow: 2px;
+}
+
+.routeTable th {
+    height: 40px;
+    width: 150px;
+    text-align: center;
+    color: white;
+}
+
+.routeTable td {
+    width: 150px;
+    text-align: center;
+    color: black;
+}
+
+.routeTable tbody {
+    display: block;
+    overflow: auto;
+    height: 200px;
+    box-shadow: 0px 1px 1px 0px rgba(240, 240, 240, 1);
+}

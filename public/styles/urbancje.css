@@ -1,0 +1,89 @@
+.route-list {
+    overflow: hidden;
+}
+
+.route-list ul {
+    list-style: none;
+}
+
+.route-list ul li {
+    float: left;
+    background-color: #F5F5F5;
+    /*min-width: 18%;
+    max-width: 267.367px; */
+    font-size: 16px;
+    width: 210px;
+    height: 60px;
+    margin: 10px;
+}
+
+.routes {
+    display: inline-block;
+    width: 100%
+}
+
+.announcements {
+    display: inline-block;
+    width: 17%;
+    vertical-align: top;
+}
+
+.announcements h3 {
+    text-align: center;
+    border-bottom: 2px solid gray;
+    width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.announcements .headline {
+    border-bottom: 2px solid lightblue;
+    font-size: 19px;
+    width: 200px;
+}
+
+.announcements .content {
+    margin-bottom: 20px;
+}
+.trolleybus {
+    border: 0px;
+    border-left: 4px;
+    border-style: solid;
+    border-left-color: #1b4b8b;
+}
+
+.bus {
+    border: 0px;
+    border-left: 4px;
+    border-style: solid;
+    border-left-color: darkred;
+}
+
+.minibus {
+    border: 0px;
+    border-left: 4px;
+    border-style: solid;
+    border-left-color: #e88832;
+}
+
+.tram {
+    border: 0px;
+    border-left: 4px;
+    border-style: solid;
+    border-left-color: darkgreen;
+}
+
+.route-list ul li a {
+    text-decoration: none;
+    color: black;
+}
+
+.route-title {
+    padding-top: 7px;
+    text-align: center;
+    font-size: 21px;
+}
+
+.route {
+    text-align: center;
+}

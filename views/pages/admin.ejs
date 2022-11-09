@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+    <head>
+        <link rel = "stylesheet" type = "text/css" href = "/public/styles/admin.css" />
+    </head>
+    <body>
+        <%- include ("../partials/admin-sidebar") %>
+    </body>
+</html>
+
+<script>
+    var dropdown = document.getElementsByClassName("dropdown-bar");
+    var dropdown2 = document.getElementsByClassName("dropdown-container");
+    for(let i = 0; i < dropdown.length; i++)
+    dropdown[i].addEventListener("click", function() {
+        if (dropdown2[i].style.display === "block") {
+            dropdown2[i].style.display = "none";
+        }
+        else {
+            dropdown2[i].style.display = "block";
+        }
+    });
+</script>

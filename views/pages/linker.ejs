@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="/public/styles/admin.css" />
+    <link rel="stylesheet" type="text/css" href="/public/styles/linker.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        } 
+    </script>
+</head>
+
+<body>
+    <%- include ("../partials/admin-sidebar")%>
+    <div class = "linkerFormContainer">
+        <form class="linkerForm" action="/admin/linker" method="post">
+            <label for="lineNo">Line number</label><br>
+            <select class="js-lineNo" name="lineNo" id="lineNo" style="width: 100%">
+                <option value = 2>102L</option>
+                <% cjroutes.forEach(function(cjroutes) { %>
+                    <option value="<%= cjroutes.id %>">
+                        <%= cjroutes.number %>
+                    </option>
+                    <% }) %>
+            </select>
+            <br><br><label for="routeDirection">Direction of the route</label><br>
+            <select class="js-direction" name="routeDirection" id="routeDirection" style="width: 30%" required>
+                <option></option>
+                <option value = "S">Start</option>
+                <option value = "R">Retur</option>
+            </select>
+            <br><br><label for="stop">Name of the bus station</label><br>
+            <select class="js-station" name="stop" id="stop" style="width: 100%" required>
+                <option></option>
+                <% cjstops.forEach(function(cjstops) { %>
+                    <option value="<%= cjstops.stop_id %>">
+                        <%= cjstops.stop_name %>
+                    </option>
+                <% }) %>
+            </select>
+            <br><br><label for="precedingStop">Name of the preceding bus station</label><br>
+            <select class="js-station-ajax" name="precedingStop" id="precedingStop" style="width: 100%" required disabled>
+                <option></option>
+            </select>
+            <input class = "submit-button" type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+
+</html>
+<script>
+    function hidden(status) {
+        if (status) {
+            document.getElementById('precedingStop').disabled = false;
+            document.getElementById('precedingStop').required = true;
+            document.getElementById('stop').disabled = false;
+            document.getElementById('stop').required = true;
+        }
+        else {
+            document.getElementById('precedingStop').disabled = true;
+            document.getElementById('precedingStop').required = false;
+            document.getElementById('stop').disabled = false;
+            document.getElementById('stop').required = true;
+        }
+    }
+    $(document).ready(function () {
+        $('.js-lineNo').select2({
+            placeholder: "Select line number",
+            allowClear: true
+        });
+        $(".js-station").select2({
+            placeholder: "Select a station",
+            allowClear: true
+        });
+        $('.js-station-ajax').select2({
+            placeholder: "Select a line number",
+            allowClear: true
+        });
+        document.getElementById('precedingStop').disabled = true,
+        $('#routeDirection').select2({
+            placeholder: "Select route direction",
+            allowClear: true
+        });
+        $('#noStop').select2({
+            placeholder: "Select a station",
+            allowClear: true
+        })
+        $('.js-direction').on('select2:select', function (event) {
+            const id = $('.js-lineNo').find(':selected').val();
+            const direction = $('.js-direction').find(':selected').val();
+            $.getJSON('/api/request/' + id + '?direction=' + direction, function (data) {
+                if (data.length > 0) {
+                    hidden(true);
+                    const options = data.map(e => ({ id: e.stop_id, text: e.stop_name }));
+                    console.log(options);
+                    $('.js-station-ajax').empty().prepend('<option selected=""></option>').select2({
+                        data: options,
+                        placeholder: 'Select a stop from line number ' + id,
+                        allowClear: true
+                    });
+                }
+                else {
+                    hidden(false);
+                    $('.js-station-ajax').empty().prepend('<option selected=""></option>').select2({
+                        placeholder: 'Select the starting station above'
+                    });
+                }
+            }
+            
+            );
+        });
+
+        $('.js-lineNo').on('select2:select', function (event) {
+            const id = $('.js-lineNo').find(':selected').val();
+            const direction = $('.js-direction').find(':selected').val();
+            $.getJSON('/api/request/' + id + '?direction=' + direction, function (data) {
+                if (data.length > 0) {
+                    hidden(true);
+                    const options = data.map(e => ({ id: e.stop_id, text: e.stop_name }));
+                    console.log(options);
+                    $('.js-station-ajax').empty().prepend('<option selected=""></option>').select2({
+                        data: options,
+                        placeholder: 'Select a stop from line number ' + id,
+                        allowClear: true
+                    });
+                }
+                else {
+                    hidden(false);
+                    $('.js-station-ajax').empty().prepend('<option selected=""></option>').select2({
+                        placeholder: 'Select the starting station above'
+                    });
+                }
+            }
+            
+            );
+        });
+    });
+</script>
+<script>
+    var dropdown = document.getElementsByClassName("dropdown-bar");
+    var dropdown2 = document.getElementsByClassName("dropdown-container");
+    for (let i = 0; i < dropdown.length; i++)
+        dropdown[i].addEventListener("click", function () {
+            if (dropdown2[i].style.display === "block") {
+                dropdown2[i].style.display = "none";
+            }
+            else {
+                dropdown2[i].style.display = "block";
+            }
+        });
+
+</script>
