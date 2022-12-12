@@ -1,39 +1,79 @@
 const e = require('express');
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = require('node-fetch');
 const connection = require('../dabatase');
 
-async function processTUZTimeBlock(block, day) {
-    // Prepare for the blocs for processing
-    while (block.includes("</p>") || block.includes(";")) block = block.replace("</p>", '').replace(";", '');
-    while (block.includes("<b>")) block = block.replace("<b>", '').replace("</b>", '')
-    while (block.includes(",")) block = block.replace(",", '');
-    while (block.includes("–") || block.includes("-")) block = block.replace("–", '').replace("-", '');
-    while (block.includes("<sup>")) block = block.replace("<sup>", ':').replace("</sup>", '');
-    while (block.includes("Elevi")) block = block.replace("Elevi", '').replace("elevi", '');
-    while (block.includes("(") || block.includes(")")) block = block.replace("(", '').replace(")", '');
-    block = block.replace("Luni", "Weekday").replace("Vineri", '');
-    //console.log(block);
+async function processTUZTimeBlock(block, day, processedNode) {
+    block = block.replaceAll(/(<b>)|(<\/b>)|(<p>)|(<\/p>)|(<\/sup>)|(-)/ig, '');
+    block = block.replaceAll('<sup>', ':');
+    if (block.includes("Nu circula")) {
+        processedNode.checks[0]++;
+        processedNode.checks[1]++;
+        processedNode.checks[2]++;
+        return;
+    }
     let timeBlockNodes = block.split(/\r?\n/).map(e => e.split(' ')).shift();
-    //console.log(timeBlockNodes);
-    if (timeBlockNodes[0] == "Weekday") day.type++;
-    else if (timeBlockNodes[0] == "Sambata" || timeBlockNodes[0] == "Sâmbăta") day.type++;
-    else if (timeBlockNodes[0].trim() == "Duminica") day.type++;
-    //else if (timeBlockNodes[0].trim() == "Nu" && day.type < 0) day.type = -2;
-    else return;
-    console.log(day.type);
     for (const timeBlock of timeBlockNodes) {
-        if (timeBlock.length > 1 && timeBlock.length <= 5 && noVowels(timeBlock)) console.log(timeBlock); //processSchedule(lineId, day, timeBlock.trim(), dir);
+        if (timeBlock.includes("Luni")) {
+            processedNode.checks[0]++;
+            if (processedNode.checks[0] == 0) day.type = "lv";
+            else day.type = "lvr" 
+        }
+        else if (timeBlock.includes("Sambata") || timeBlock.includes("Sâmbăta")) {
+            processedNode.checks[1]++;
+            if (processedNode.checks[1] == 0) day.type = "s";
+            else day.type = "sr" 
+        }
+        else if (timeBlock.includes("Duminica") || timeBlock.includes("Duminică")) {
+            processedNode.checks[2]++;
+            if (processedNode.checks[2] == 0) 
+                day.type = "d";
+            else 
+                day.type = "dr" 
+        }
+        else if (/\d/.test(timeBlock) && timeBlock.includes(':') && day.type == "noDay") processedNode.checks[3]++;
+        if (timeBlock.includes(':') && timeBlock.length <= 5 && timeBlock.length > 3)
+            processSchedule(day, timeBlock, processedNode)
+        if (timeBlock.length > 5) {
+            if (timeBlock.includes(':')) {
+                let block = timeBlock.split(/\r?\n/).map(e => e.split(',')).shift();
+                for (let subBlock of block) {
+                    if (subBlock.includes(':') && (noVowels(subBlock) || subBlock.includes('(elevi)'))) {
+                        subBlock = subBlock.trim().slice(0, 5);
+                        processSchedule(day, subBlock, processedNode)
+                    }
+                }
+            }
+        }
     }
 }
 
-async function processSchedule(lineId, day, time, dir) {
-    const db = await connection;
-    //await db.query('DELETE FROM sjtimes WHERE lineNo = ? AND type = ?', [lineId, scheduleTypeId])
-    /*if (time === "undefined") {
-        if (workingDayHours[0][0] == "Nu circula") workingDayHours[0][0] = "";
-        if (workingDayHours[0][1] == "Nu circula") workingDayHours[0][1] = "";
-    } */
-    //await db.query('INSERT INTO sjtimes(lineNo, departure, dir, type) VALUES (?, ?, ?, ?)', [lineId, time, dir, day]);
+async function processSchedule(day, block, processedNode) {
+    switch(day.type) {
+        case "lv":
+            processedNode.weekday.departureTime.push(block.replace(/\;|\,|\./, ''));
+            break;
+        case "lvr":
+            processedNode.weekday.returnTime.push(block.replace(/\;|\,|\./, ''));
+            break;
+        case "s":
+            processedNode.saturday.departureTime.push(block.replace(/\;|\,|\./, ''));
+            break;
+        case "sr":
+            processedNode.saturday.returnTime.push(block.replace(/\;|\,|\./, ''));
+            break;
+        case "d":
+            processedNode.sunday.departureTime.push(block.replace(/\;|\,|\./, ''));
+            break;
+        case "dr":
+            processedNode.sunday.returnTime.push(block.replace(/\;|\,|\./, ''));
+            break;
+        case "noDay":
+            if (processedNode.checks[3] == 0) 
+                processedNode.weekday.departureTime.push(block.replace(/\;|\,|\./, ''));
+            else 
+                processedNode.weekday.returnTime.push(block.replace(/\;|\,|\./, ''));
+            break;
+    }
 } 
 
 function noVowels(string) {

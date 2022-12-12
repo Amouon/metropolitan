@@ -1,4 +1,4 @@
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = require('node-fetch');
 
 const express = require("express");
 const router = express.Router();
@@ -8,7 +8,7 @@ const { asyncWrapper } = require('../utils');
 
 const connection = require('../dabatase');
 const { getCsvSchedule, SCHEDULE_TYPES } = require('../utils/csvHandlers');
-const { getRouteStops } = require('../utils/dbHandlers');
+const { getRouteStops, insertTimeTableIntoDatabase } = require('../utils/dbHandlers');
 const { processTUZTimeBlock } = require('../utils/jsonHandlers');
 const { request } = require('express');
 
@@ -105,26 +105,44 @@ router.get("/request/:number", asyncWrapper(async function(req, res) {
     res.json(await getRouteStops(number, direction));
 }));
 
-router.get("/test", asyncWrapper(async function (req, res) {
+router.get("/fetchSJRoutes", asyncWrapper(async function (req, res) {
     const db = await connection;
     let body = [];
-    let response = []; //1607 - 16B, 2022 1B, 224 1
-    
-    const lines = require('../jsons/sjIds.json');
+    let response = [];
+    const lines = require('../jsons/sjIds.json')
+    await db.query("TRUNCATE TABLE sjroutes");
+    await db.query("TRUNCATE TABLE sjtimes");
     for (const line of lines.line) {
-        let day = { type : -1 }
+        let processedNode = { 
+            weekday : { 
+                departureTime : [],
+                returnTime : [] 
+            },
+            saturday : {
+                departureTime : [],
+                returnTime : [] 
+            },
+            sunday : {
+                departureTime : [],
+                returnTime : [] 
+            },
+            checks : [-1, -1, -1, -1]
+        }
+        let testObjectsNameThatIWillChange = [];
+        let processedSchedule = [];
+        let day = { type : "noDay"};
         response = await fetch('https://www.tuz.ro/wp-json/wp/v2/posts/' + line.identifier + "\\", {
         method: "GET",
         headers: {
             "Referer": "https://www.tuz.ro",
         }
         }).then(response => response.json());
-        console.log("Linia " + line.number);
-        // await db.query('INSERT INTO sjroutes(number, route, identifier) VALUES (?, ?, ?)', [line.number, line.route, line.identifier]);
+        await db.query('INSERT INTO sjroutes(number, route, identifier) VALUES (?, ?, ?)', [line.number, line.route, line.identifier]);
         let timeBlockNodes = response.content.rendered.split(/\r?\n/).map(e => e.split('<p>'));
         for (const block of timeBlockNodes) {
-            if (block[1] !== undefined) await processTUZTimeBlock(block[1], day);
+            if (block[1] !== undefined && !block[1].includes("iframe")) await processTUZTimeBlock(block[1], day, processedNode);
         }
+        insertTimeTableIntoDatabase(processedNode, line.number);
     }
 }));
 module.exports = router;

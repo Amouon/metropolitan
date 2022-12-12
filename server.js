@@ -50,15 +50,19 @@ app.get('/urban', asyncWrapper(async function(req, res) {
   const db = await connection;
   let routes = [];
   // Fetching the routes from the database 
-  if (req.query.region == "CJ") {
-    [routes] = await db.query("SELECT * FROM cjroutes WHERE number NOT LIKE 'M%' ORDER BY cast(number as unsigned)")
-  };
-  if (req.query.region == "SM") {
-    [routes] = await db.query("SELECT * FROM smroutes ORDER BY cast(number as unsigned)");
-  };
-  //const [sjroutes] = await db.query("SELECT * FROM sjroutes");
+  switch(req.query.region) {
+    case "CJ":
+      [routes] = await db.query("SELECT * FROM cjroutes WHERE number NOT LIKE 'M%' ORDER BY cast(number as unsigned)")
+      break;
+    case "SM":
+      [routes] = await db.query("SELECT * FROM smroutes ORDER BY cast(number as unsigned)");
+      break;
+    case "SJ":
+      [routes] = await db.query("SELECT * FROM sjroutes");
+      break;
+  }
   res.render('pages/urban', {routes, query : req.query, selected : 4});
-}));
+  }));
 
 // About page
 
@@ -75,19 +79,29 @@ app.get('/route', asyncWrapper(async function(req, res) {
   let lineNo = [];
   let times = [];
   let detailed = []
-  if (req.query.region == "CJ") {
-    [linker] = await db.query("SELECT * FROM cjlinker RIGHT JOIN cjstops on stopId = stop_id RIGHT JOIN cjroutes on routeId = id WHERE number = ?", [req.query.route]);
-    [lineNo] = await db.query("SELECT id FROM cjroutes WHERE number = ?", [req.query.route]);
-    [times] = await db.query("SELECT id, lineNo, IFNULL(departureStart, '') departureStart, IFNULL(departureReturn, '') departureReturn, type FROM cjtimes WHERE lineNo = ?", [lineNo[0].id]);
-    [detailed] = await db.query("SELECT endOne, endTwo, IFNULL(info, '') info, IFNULL(changes, '') changes, type FROM cjdetailed JOIN cjroutes on id = routeId WHERE routeId = ?", [lineNo[0].id]);
-  };
-  if (req.query.region == "SM") {
-    [linker] = await db.query("SELECT * FROM smlinker RIGHT JOIN smstops on stopId = stop_id RIGHT JOIN smroutes on routeId = id WHERE number = ?", [req.query.route]);
-    [lineNo] = await db.query("SELECT id FROM smroutes WHERE number = ?", [req.query.route]);
-    [times] = await db.query("SELECT id, lineNo, IFNULL(departureStart, '') departureStart, IFNULL(departureReturn, '') departureReturn, type FROM smtimes WHERE lineNo = ?", [lineNo[0].id]);
-    [detailed] = await db.query("SELECT endOne, endTwo, IFNULL(info, '') info, IFNULL(changes, '') changes, type FROM smdetailed JOIN smroutes on id = routeId WHERE routeId = ?", [lineNo[0].id]);
+  try {
+    if (req.query.region == "CJ") {
+      [linker] = await db.query("SELECT * FROM cjlinker RIGHT JOIN cjstops on stopId = stop_id RIGHT JOIN cjroutes on routeId = id WHERE number = ?", [req.query.route]);
+      [lineNo] = await db.query("SELECT id FROM cjroutes WHERE number = ?", [req.query.route]);
+      [times] = await db.query("SELECT id, lineNo, IFNULL(departureStart, '') departureStart, IFNULL(departureReturn, '') departureReturn, type FROM cjtimes WHERE lineNo = ?", [lineNo[0].id]);
+      [detailed] = await db.query("SELECT endOne, endTwo, IFNULL(info, '') info, IFNULL(changes, '') changes, type FROM cjdetailed JOIN cjroutes on id = routeId WHERE routeId = ?", [lineNo[0].id]);
+    };
+    if (req.query.region == "SM") {
+      [linker] = await db.query("SELECT * FROM smlinker RIGHT JOIN smstops on stopId = stop_id RIGHT JOIN smroutes on routeId = id WHERE number = ?", [req.query.route]);
+      [lineNo] = await db.query("SELECT id FROM smroutes WHERE number = ?", [req.query.route]);
+      [times] = await db.query("SELECT id, lineNo, IFNULL(departureStart, '') departureStart, IFNULL(departureReturn, '') departureReturn, type FROM smtimes WHERE lineNo = ?", [lineNo[0].id]);
+      [detailed] = await db.query("SELECT endOne, endTwo, IFNULL(info, '') info, IFNULL(changes, '') changes, type FROM smdetailed JOIN smroutes on id = routeId WHERE routeId = ?", [lineNo[0].id]);
+    }
+    if (req.query.region == "SJ") {
+      [lineNo] = await db.query("SELECT id FROM sjroutes WHERE number = ?", [req.query.route]);
+      [times] = await db.query("SELECT id, lineNo, IFNULL(departureStart, '') departureStart, IFNULL(departureReturn, '') departureReturn, type FROM sjtimes WHERE lineNo = ?", [lineNo[0].id]);
+    };
   }
-  res.render('pages/route', {linker, query : req.query, times, detailed : detailed[0]});
+  catch(err) {
+    if (err instanceof TypeError) console.log("bro");
+  }
+    res.render('pages/route', {linker, query : req.query, times, detailed : detailed[0]});
+
 }));
 
 // Metropolitan routes page
@@ -95,7 +109,7 @@ app.get('/route', asyncWrapper(async function(req, res) {
 app.get('/metropolitan', asyncWrapper(async function (req, res) {
   const db = await connection;
   let query = {region: "CJ"};
-  const [routes] = await db.query("SELECT * FROM cjroutes WHERE number LIKE 'M%' ORDER BY cast(number as unsigned)"); 
+  const [routes] = await db.query("SELECT * FROM cjroutes WHERE number LIKE 'M%' ORDER BY cast(number as unsigned)");
   res.render('pages/urban', {routes, query, selected : 5});
 }));
 

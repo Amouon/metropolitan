@@ -9,16 +9,17 @@
     <main>
     <div class = "routes">
       <div class="route-list">
-        <% routes.forEach(function(routes) { %>
         <ul>
-          <li class = "<%=routes.type%>">
+        <% routes.forEach(function(routes) { %>
+          <% if (routes.type === undefined) routes.type = "bus" %>
+          <li class = "<%= routes.type %>">
             <a href = "/route?route=<%= routes.number %>&region=<%= query.region %>"">
               <div class = "route-title">Linia <%= routes.number %></div>
               <div class = "route"><%= routes.route %></div>
             </a>
           </li>
+        <% }) %> 
         </ul>
-      <% }) %> 
       </div>
     </div>
   </body>

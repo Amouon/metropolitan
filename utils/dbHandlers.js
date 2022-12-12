@@ -29,8 +29,26 @@ async function insertStationEntry(stopName) {
     }
 }
 
+async function insertTimeTableIntoDatabase(processedNode, identifier) {
+    const db = await connection;
+    let [[id]] = await db.query("SELECT id FROM sjroutes WHERE number = ?", [identifier]);
+    id = id.id;
+    let maxLength = Math.max(processedNode.weekday.departureTime.length, processedNode.weekday.returnTime.length);
+    for (let i = 0; i < maxLength; i++) {
+        await db.query("INSERT INTO sjtimes(lineNo, departureStart, departureReturn, type) VALUES (?, ?, ?, ?)", [id, processedNode.weekday.departureTime[i], processedNode.weekday.returnTime[i], 0])
+    }
+    maxLength = Math.max(processedNode.saturday.departureTime.length, processedNode.saturday.returnTime.length);
+    for (let i = 0; i < maxLength; i++) {
+        await db.query("INSERT INTO sjtimes(lineNo, departureStart, departureReturn, type) VALUES (?, ?, ?, ?)", [id, processedNode.saturday.departureTime[i], processedNode.saturday.returnTime[i], 1])
+    }
+    maxLength = Math.max(processedNode.sunday.departureTime.length, processedNode.sunday.returnTime.length);
+    for (let i = 0; i < maxLength; i++) {
+        await db.query("INSERT INTO sjtimes(lineNo, departureStart, departureReturn, type) VALUES (?, ?, ?, ?)", [id, processedNode.sunday.departureTime[i], processedNode.sunday.returnTime[i], 2])
+    }
+}
 module.exports = {
     getRouteStops,
     insertLinkerEntry,
-    insertStationEntry
+    insertStationEntry,
+    insertTimeTableIntoDatabase
 };

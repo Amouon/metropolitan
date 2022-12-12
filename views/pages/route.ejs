@@ -17,15 +17,20 @@
     <% linker.forEach(function(linker) { %>
       <% if (linker.number == query.route) type = linker.type %>
     <% }) %>
-    <% if (type == "trolleybus") { %>
-      <% type = "#1b4b8b" %>
-    <% } else if (type == "bus") { %>
-      <% type = "darkred" %>
-    <% } else if (type == "minibus") { %>
-      <% type = "#e88832" //"#f8d000" yellow color %>
-    <% } else { %>
-      <% type = "darkgreen" %>
-    <% } %>
+    <% switch(type) {
+      case "trolleybus":
+        type = "#1b4b8b";
+        break;
+      case "bus":
+        type = "darkred";
+        break;
+      case "minibus":
+        type = "#e88832";
+        break;
+      case "tram":
+        type = "darkgreen";
+        break;
+    } %>
     <% let color = "style = \"border-color:" + type + "\""; %>
     <link rel="stylesheet" type="text/css" href="/public/styles/route.css"/>
     <link rel="stylesheet" type="text/css" href="/public/styles/routeTable.css"/>
